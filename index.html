@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Compras</title>
+  <style>
+    body {
+      background-color: #0a0a0a;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      max-width: 400px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #1a1a1a;
+      border: 1px solid #6366f1;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+ .header h1 {
+      font-size: 24px;
+      color: #63661;
+    }
+ .header button {
+      background-color: #6366f1;
+      color: #ffffff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .header button:hover {
+      background-color: #5c5cff;
+    }
+    .item {
+      display: flex;
+      justify-content: space-between      align-items: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #2a2a2a;
+      border: px solid #3a3a3a;
+      border-radius: 5px;
+    }
+    .item span {
+      font-size: 16px;
+ }
+    .item input[type="checkbox"]      margin-right: 10px;
+    }
+    .item button {
+      background-color: #6f1;
+      color: #ffffff;
+      border: none;
+      padding: 5px 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+ .item button:hover {
+      background-color: #5c5cff;
+    }
+    .form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .form input[type="text"] {
+      width: 100%;
+      height: 40px;
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #3a3a3a;
+      border-radius: px;
+    }
+ .form input[type="number"] {
+      width: 100%;
+      height: 40px;
+      margin-bottom: 10px;
+      padding:10px;
+      font-size: 16px;
+      border: 1px solid #3a3a3a;
+      border-radius 5px;
+    }
+    .form button {
+      background-color: #6366f1;
+      color: #;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .form button:hover {
+      background-color: #5c5cff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Lista de Compras</h1>
+      <button id="limpar-comprados">Limpar Comprados</button>
+    </div>
+    <form id="form-adicionar">
+      <input type="text" id="nome-item" placeholder="Nome do item">
+      <input type="number" id="quantidade-item" placeholder="Quantidade">
+      <button id="adicionar-item">Adicionar Item</button>
+    </form>
+    <div id="lista-itens">
+      <!-- Itens da lista serão exibidos aqui -->
+    </div>
+  </div>
+  <script>
+    let itens = JSON.parse(localStorage.getItem('itens')) || [];
+    const listaItens = document.getElementById('lista-itens');
+    const formAdicionar = document.getElementById('form-adicionar');
+    const limparComprados = document.getElementById('limpar-comprados');
+
+    // Função para adicionar item à lista
+    function adicionarItem(nome, quantidade) {
+      const item = {
+        nome,
+        quantidade,
+        comprado: false
+      };
+      itens.push(item);
+      localStorage.setItem('itens', JSON.stringify(itens));
+      exibirItens();
+    }
+
+    // Função para exibir itens da lista
+    function exibirItens() {
+      listaItens.innerHTML = '';
+      itens.forEach((item, index) => {
+        const itemHTML = `
+          <div class="item">
+            <span>${item.nome} (${item.quantidade})</span>
+            <input type="checkbox" id="comprado-${index}" ${item.comprado ? 'checked' : ''}>
+            <button id="remover-item-${index}">Remover</button>
+          </div>
+        `;
+        listaItens.insertAdjacentHTML('beforeend', itemHTML);
+        const checkbox = document.getElementById(`comprado-${index}`);
+        const removerItem = document.getElementById(`remover-item-${index}`);
+        checkbox.addEventListener('change', () => {
+          item.comprado checkbox.checked;
+          localStorage.setItem('itens', JSON.stringify(itens));
+        });
+        removerItem.addEventListener('click', () => {
+          itens.splice(index, 1);
+          localStorage.setItem('itens', JSON.stringify(itens));
+          exibirItens();
+        });
+      });
+    }
+
+    // Função para limpar itens comprados
+    function limparCompradosLista() {
+      itens = itens.filter(item => !.comprado);
+      localStorage.setItem('itens', JSON.stringify(itens));
+      exibirItens();
+    }
+
+    // Event listeners
+    formAdicionar.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nomeItem = document.getElementById('nome-item').value;
+      const quantidadeItem = document.getElementById('quantidade-item').value;
+      adicionarItem(nomeItem, quantidadeItem);
+      document.getElementById('nome-item').value = '';
+      document.getElementById('quantidade-item').value = '';
+ });
+    limparComprados.addEventListener('click', limparCompradosLista);
+
+    // Exibir itens da lista ao carregar a página
+    exibirItens();
+  </script>
+</body>
+</html>
